@@ -1,0 +1,3 @@
+nginx_image          = "nginx-example:tag-example"
+nginx_container_name = "nginx-example"
+nginx_container_port = 8080

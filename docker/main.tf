@@ -11,32 +11,35 @@ provider "docker" {
   // config
 }
 
-resource "docker_image" "nginx" {
-  name         = "nginx:alpine"
-  keep_locally = false
+variable "nginx_image" {
+  type        = string
+  description = "NGINX Image"
+  sensitive   = true
 }
 
-resource "docker_image" "caddy" {
-  name         = "caddy:alpine"
+variable "nginx_container_name" {
+  type        = string
+  description = "NGINX Container Name"
+  default     = "nginx"
+}
+
+variable "nginx_container_port" {
+  type        = number
+  description = "NGINX Container Port"
+  default     = 8080
+}
+
+resource "docker_image" "nginx" {
+  name         = var.nginx_image
   keep_locally = false
 }
 
 resource "docker_container" "nginx_server" {
   image = docker_image.nginx.image_id
-  name  = "nginx-server"
+  name  = var.nginx_container_name
 
   ports {
-    internal = 80
+    internal = var.nginx_container_port
     external = 8080
-  }
-}
-
-resource "docker_container" "caddy_server" {
-  image = docker_image.caddy.image_id
-  name  = "caddy-server"
-
-  ports {
-    internal = 80
-    external = 8081
   }
 }
