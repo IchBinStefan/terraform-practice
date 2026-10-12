@@ -8,38 +8,51 @@ terraform {
 }
 
 provider "docker" {
-  // config
+  host = "tcp://127.0.0.1:2375"
 }
 
-variable "nginx_image" {
+variable "swarm_web_server_image" {
   type        = string
-  description = "NGINX Image"
+  description = "Web Server Image"
   sensitive   = true
 }
 
-variable "nginx_container_name" {
+variable "swarm_service_name" {
   type        = string
-  description = "NGINX Container Name"
-  default     = "nginx"
+  description = "Docker Swarm Service Name"
+  default     = "swarm-web-service"
 }
 
-variable "nginx_container_port" {
+variable "swarn_service_port" {
   type        = number
-  description = "NGINX Container Port"
+  description = "Docker Swarm Service Port"
   default     = 8080
 }
 
-resource "docker_image" "nginx" {
-  name         = var.nginx_image
-  keep_locally = false
-}
+resource "docker_service" "web-service" {
+  name = var.swarm_service_name
 
-resource "docker_container" "nginx_server" {
-  image = docker_image.nginx.image_id
-  name  = var.nginx_container_name
+  task_spec {
+    container_spec {
+      image = var.swarm_web_server_image
+    }
+    placement {
+      constraints = [
+        "node.role == worker"
+      ]
+    }
+  }
 
-  ports {
-    internal = var.nginx_container_port
-    external = 8080
+  mode {
+    replicated {
+      replicas = 6
+    }
+  }
+
+  endpoint_spec {
+    ports {
+      target_port    = 80
+      published_port = var.swarn_service_port
+    }
   }
 }
