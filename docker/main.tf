@@ -7,3 +7,14 @@ terraform {
     }
   }
 }
+
+module "containers" {
+  source = "./containers"
+
+  providers = {
+    docker = docker.local
+  }
+
+  container_name = "caddy-server"
+  port           = 8083
+}

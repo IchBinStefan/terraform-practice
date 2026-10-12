@@ -10,7 +10,7 @@ variable "swarm_service_name" {
   default     = "swarm-web-service"
 }
 
-variable "swarn_service_port" {
+variable "swarm_service_port" {
   type        = number
   description = "Docker Swarm Service Port"
   default     = 8080

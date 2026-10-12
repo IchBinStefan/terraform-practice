@@ -21,7 +21,7 @@ resource "docker_service" "web-service" {
   endpoint_spec {
     ports {
       target_port    = 80
-      published_port = var.swarn_service_port
+      published_port = var.swarm_service_port
     }
   }
 }
